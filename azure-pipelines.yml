@@ -13,7 +13,7 @@ steps:
 - task: runtsqltunittests@0
   displayName: 'run tSQLt Example unit tests' 
   inputs:
-    connectionString: 'Server=sqlserver2019demo.uksouth.cloudapp.azure.com;Initial Catalog=tSQLt_Example;Persist Security Info=True;User ID=demoadmin'
+    connectionString: 'Data Source=sqlserver2019demo.uksouth.cloudapp.azure.com;Initial Catalog=tSQLt_Example;Persist Security Info=True;User ID=demoadmin'
     queryTimeout: '60'
     rootOutput: '$(System.DefaultWorkingDirectory)/tSQLt-out'
     testResultsFileName: 'TEST-Results.xml'
