@@ -17,8 +17,7 @@ steps:
     queryTimeout: '60'
     rootOutput: '$(System.DefaultWorkingDirectory)/tSQLt-out'
     testResultsFileName: 'TEST-Results.xml'
-    enableCodeCoverage: true
-    coberturaFileName: 'Cobertura.xml'
+    enableCodeCoverage: false    
     htmlReportsOutput: 'AzurePipelines'
     runAllTests: false
     testOrClassName: 'AcceleratorTests'
@@ -30,10 +29,5 @@ steps:
     testResultsFiles: '**/TEST-*.xml'
     searchFolder: '$(Build.SourcesDirectory)/out'
     
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(Build.SourcesDirectory)/out/Cobertura.xml'
-    reportDirectory: '$(Build.SourcesDirectory)/out/AzurePipelines'
 
   
