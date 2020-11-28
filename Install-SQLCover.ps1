@@ -3,7 +3,7 @@
     [string]$destinationFolder = "C:\temp\"
 )
 
-$zipFile = $dependenciesDirectory + $(Split-Path -Path $zipFile  -Leaf) 
+$zipFile = $destinationFolder + $(Split-Path -Path $releaseUrl -Leaf) 
  
 Invoke-WebRequest -Uri $releaseUrl -OutFile $zipFile
 
