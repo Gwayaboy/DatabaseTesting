@@ -1,13 +1,11 @@
 ﻿param(
-    [string]$dependenciesDirectory = "C:\Dev"
+    [String] $releaseUrl = "https://github.com/GoEddie/SQLCover/archive/0.5.0.zip",
+    [string]$destinationFolder = "C:\temp\"
 )
 
-$Url = 'https://github.com/GoEddie/SQLCover/archive/0.5.0.zip' 
-$ZipFile = $dependenciesDirectory + $(Split-Path -Path $Url -Leaf) 
-$Destination= $dependenciesDirectory + '\SQLCover\'
+$zipFile = $dependenciesDirectory + $(Split-Path -Path $zipFile  -Leaf) 
  
-Invoke-WebRequest -Uri $Url -OutFile $ZipFile 
+Invoke-WebRequest -Uri $releaseUrl -OutFile $zipFile
+
+Expand-Archive -LiteralPath $zipFile -DestinationPath $destinationFolder -Force
  
-$ExtractShell = New-Object -ComObject Shell.Application 
-$Files = $ExtractShell.Namespace($ZipFile).Items() 
-$ExtractShell.NameSpace($Destination).CopyHere($Files) 
