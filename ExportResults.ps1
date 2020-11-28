@@ -7,6 +7,8 @@
     [string]$queryTimeout
 )
 
-mkdir tsqlt-out
-cd tSQLt-out
-(Invoke-SqlCmd -ConnectionString $connectionString -QueryTimeout $queryTimeout -Query "EXEC [tSQLt].[XMLResultFormatter]")[0] | Out-File -FilePath $testResultsFileName -NoNewLine
+Write-Output "Exporting to tSQLt run to $testResultsFileName"    
+
+(Invoke-SqlCmd -ConnectionString $connectionString -QueryTimeout $queryTimeout -Query "EXEC [tSQLt].[XMLResultFormatter]")[0] | Out-File -FilePath "$testResultsFileName" -NoNewLine
+
+Write-Output "Exported test run to $testResultsFileName"    
