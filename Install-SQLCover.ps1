@@ -1,6 +1,6 @@
 ﻿param(
     [String] $releaseUrl = "https://github.com/GoEddie/SQLCover/archive/0.5.0.zip",
-    [string]$destinationFolder = "C:\temp\blah"
+    [string]$destinationFolder
 )
 
 $zipFile = $destinationFolder + $(Split-Path -Path $releaseUrl -Leaf)

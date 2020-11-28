@@ -8,7 +8,7 @@
     $testNameOrClassName = "",
 
     # Code Coverage parameters
-    [string]$openCoverSourceFolder = "C:\temp\SQLCover-0.5.0\src\SQLCover\releases\template",
+    [string]$openCoverSourceFolder = "C:\dev\SQLCover\src\SQLCover\SQLCover\bin\Release\",
     [string]$coberturaFileName = "C:\temp\coverage\Cobertura.xml"
 )
 
@@ -30,4 +30,4 @@ Write-Output "Tests ran successfully. Saving code coverage cover report to $repo
 
 Export-OpenXml $result $reportPath
 
-
+#Export-Cobertura $result $reportPath
