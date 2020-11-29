@@ -53,11 +53,11 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
             Scenario: Report for each contact type how many contacts and duration 
 
             Example Output:
-                | InteractionType | Occurence | TotalTimeinMinutes | 
-                |-----------------|-----------|--------------------|
-                | Meeting         | 150       | 500000             | 
-                | Introduction    | 200       | 20450              | 
-                | Phone Call      | 200       | 20450              | 
+                | InteractionType | Occurences | TotalTimeinMinutes | 
+                |-----------------|------------|--------------------|
+                | Meeting         | 150        | 500000             | 
+                | Introduction    | 200        | 20450              | 
+                | Phone Call      | 200        | 20450              | 
         ```
 
         We will need to create a view that aggregates the data as above 
@@ -115,17 +115,19 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
         ```TSQL
         CREATE VIEW dbo.RptContactTypes AS
-        SELECT '' AS InteractionTypeText,
+        SELECT '' AS InteractionType,
             0 AS Occurrences,
-            0 AS TotalTimeMins
+            0 AS TotalTimeInMinutes
 
         GO	 
         ``` 
         e) create the view and run the same test which should pass now.
 
         ![](https://demosta.blob.core.windows.net/images/FirstPassingTest.PNG)           
+
+#### Exercise 2: Implementing another tSQLt unit test
     
-  6. Let's build on a more useful test that will go through the followings steps
+  1. Let's build on a more useful test that will go through the followings steps
 
         - Data table to be returned
         - Expected set of data
@@ -167,13 +169,39 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
         ```
 
+        d) Lastly let's assert both expected and actual data are the same
+
+        ```TSQL
+        --Assert
+        EXEC tSQLt.AssertEqualsTable 
+            @Expected = N'RptContactTypes.Expected', 
+            @Actual = N'RptContactTypes.Actual', 
+            @FailMsg = N'The expected data was not returned.' 
+
+        ```
+
+        e) Update the test SP and  run both tests in the ```RptContactTypes``` TestClass
         
+         
+        ```TSQL
+        EXEC tSQLt.Run '[RptContactTypes]'
+        ```
 
+        f) Our first test will still pass while our second will fail as expected as we need to implement our view 
 
+        make sure your test fails for the expected reasons with a similar message below
 
-
-
-            
+        ```TSQL        
+        [RptContactTypes].[test to check routine outputs correct data in table given normal input data] failed: (Failure) The expected data was not returned.
+        |_m_|InteractionType      |Occurrences|TotalTimeInMinutes|
+        +---+---------------------+-----------+------------------+
+        |<  |Complaint            |206        |78411             |
+        |<  |Introduction         |214        |77837             |
+        |<  |Meeting              |190        |69050             |
+        |<  |Phone Call (Outbound)|188        |64839             |
+        |<  |Sale                 |202        |75175             |
+        |>  |                     |0          |0                 |
+        ``` 
 
 
 
