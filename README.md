@@ -91,7 +91,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         b) Let's alter our test and add our assertion to check  RptContactTypes objects exists with
             
         ```tsql
-            ALTER  PROCEDURE  [RptContactTypes].[test to check RptContactTypes exists]     
+            ALTER PROCEDURE  [RptContactTypes].[test to check RptContactTypes exists]     
             AS
             BEGIN                      
                 --Assert
