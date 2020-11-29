@@ -33,12 +33,34 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
       - Alternatively [download as a zip file](https://github.com/Gwayaboy/DatabaseTesting/archive/main.zip) to your local drive 
 
   2. Set up customer management database
-        - Execute [Database Setup.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Database%20Setup.sql)
-        - Execute [Populate Data.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Populate%20Data.sql)
+        
+        From you local dev folder go to ```\DatabaseTesting\1 - tSQlt_UnitTests\01 - Setup DB```, open and execute the following scripts:
+
+        - [Database Setup.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Database%20Setup.sql)
+        - [Populate Data.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Populate%20Data.sql)
     
-  2. Install tSQLt on customer management database
+  3. Install tSQLt on customer management database
         - Download and unzip [latest tSQLt release (tSQLt_V1.0.7597.5637)](http://tsqlt.org/download/tsqlt/)
-        - Open and run tSQLt.class against the CustomerManagement Database 
+        - Open and run PrepareServer.sql and tSQLt.class to install tSQLt against your CustomerManagement Database 
+
+  4. Our requirement is to Report contacts and avegare duration
+  ```Gherkin
+      
+      Feature: Report contacts and avegare duration
+        As a Business Analyst 
+        I want to be able to report on number of contacts and duration 
+        So that I can generate average (mean) contact time and prioritise customer engagement appropriately
+
+      Scenario: Report for each contact type how many contacts and duration 
+
+      Examples Output:
+        | InteractionType | Occurence | TotalTineinMinutes | 
+        ------------------|-----------|--------------------|
+        | Meeting         | 150       | 500000             | 
+        | Introduction    | 200       | 20450              | 
+        | Phone Call      | 200       | 20450              | 
+        
+      ```
         
 
 
