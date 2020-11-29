@@ -37,7 +37,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         From you local dev folder go to ```\DatabaseTesting\1 - tSQlt_UnitTests\01 - Setup DB```, open and execute the following scripts:
 
         - [Database Setup.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Database%20Setup.sql)
-        - [Populate Data.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Populate%20Data.sql)
+        
     
   3. Install tSQLt on customer management database
         - Download and unzip [latest tSQLt release (tSQLt_V1.0.7597.5637)](http://tsqlt.org/download/tsqlt/)
@@ -137,28 +137,60 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
         a) following on steps 5. a) & b) create a new ```[test to check routine outputs correct data in table given normal input data]``` in the same ```RptContactTypes``` TestClass 
 
-        b) In the assemble or arrange section, Let's create a table to hold the expected data
+        b) In the assemble or arrange section, Let's create a fake ```InteractionType``` and ```Interaction```  tables to hold the expected data 
         
-        _PLease note that each test runs in own transaction so any object_
+        Although there's no data in the Customer Management we are still isolating test data with ```tSQLt.FakeTable```
+        
+        _PLease note that each test runs in own transaction so any object created will be rollbacked_
+        
 
         ```TSQL
-        --Assemble
+        --Assemble        
+
+        EXEC tSQLt.FakeTable @TableName = N'dbo.InteractionType'
+  
+        EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
+            
+        INSERT dbo.InteractionType
+                ( InteractionTypeID, InteractionTypeText )
+        VALUES	 (1,'Introduction'),
+                (2,'Phone Call (Outbound)'),
+                (3,'Complaint'),
+                (4,'Sale'),
+                (5,'Meeting')
+
+        INSERT dbo.Interaction
+                (InteractionTypeID,
+                InteractionStartDT,
+                InteractionEndDT)
+        VALUES  ( 
+                5 , -- Meeting
+                CONVERT(DATETIME,'2013-01-03 09:00:00',120),
+                CONVERT(DATETIME,'2013-01-03 09:30:00',120) 
+                )
+                ,( 
+                5 , -- Meeting
+                CONVERT(DATETIME,'2013-01-02 09:00:00',120),
+                CONVERT(DATETIME,'2013-01-02 10:30:00',120) 
+                )
+                ,( 
+                2 , -- Phone Call (Outbound)
+                CONVERT(DATETIME,'2013-01-03 09:01:00',120),
+                CONVERT(DATETIME,'2013-01-03 09:13:00',120) 
+                )
+                
         IF object_id('RptContactTypes.Expected') IS NOT NULL
         DROP TABLE RptContactTypes.Expected
-
-        CREATE TABLE RptContactTypes.Expected 
-        (
-          InteractionTypeText varchar(100),
-          Occurrences INT,
-          TotalTimeMins int
+        
+        CREATE TABLE RptContactTypes.Expected (
+        InteractionTypeText varchar(100),
+        Occurrences INT,
+        TotalTimeMins int
         )
 
         INSERT RptContactTypes.Expected VALUES 
-        ('Complaint',206,78411),
-        ('Introduction',214,77837),
-        ('Meeting',190,69050),
-        ('Sale',202,75175),
-        ('Phone Call (Outbound)',188,64839)
+        ('Meeting',2,120), 
+        ('Phone Call (Outbound)',1,12)
         ```
 
         c) Next we will specify in the Act section the data will be retrieving from our actual view
@@ -180,30 +212,89 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
         ```
 
-        e) Update the test SP and  run both tests in the ```RptContactTypes``` TestClass
+        e) Update the test SP and run both tests in the ```RptContactTypes``` TestClass
         
          
         ```TSQL
         EXEC tSQLt.Run '[RptContactTypes]'
         ```
 
-        f) Our first test will still pass while our second will fail as expected as we need to implement our view 
+        Our first test will still pass while our second will fail as expected as we need to implement our view. 
 
-        make sure your test fails for the expected reasons with a similar message below
+        **To avoid false negative, please make sure your test fails for the expected reasons with a similar message below**
 
         ```TSQL        
-        [RptContactTypes].[test to check routine outputs correct data in table given normal input data] failed: (Failure) The expected data was not returned.
+        [RptContactTypes].[test to check routine outputs correct data in table given normal input data] failed: (Failure) 
+        The expected data was not returned.
         |_m_|InteractionType      |Occurrences|TotalTimeInMinutes|
         +---+---------------------+-----------+------------------+
-        |<  |Complaint            |206        |78411             |
-        |<  |Introduction         |214        |77837             |
-        |<  |Meeting              |190        |69050             |
-        |<  |Phone Call (Outbound)|188        |64839             |
-        |<  |Sale                 |202        |75175             |
+        |<  |Meeting              |2          |120               |
+        |<  |Phone Call (Outbound)|1          |12                |
         |>  |                     |0          |0                 |
         ``` 
 
+        f) Let's alter our view with the following query to satisfy our tests
+
+        ```TSQL
+        ALTER VIEW [dbo].[RptContactTypes] AS
+        SELECT  IT.InteractionTypeText AS InteractionType,
+                COUNT(*) Occurrences,
+                SUM(DATEDIFF(MI,InteractionStartDT,InteractionEndDT)) TotalTimeInMinutes
+        FROM dbo.Interaction I 
+        INNER JOIN dbo.InteractionType IT 
+            ON IT.InteractionTypeID = I.InteractionTypeID
+        GROUP BY IT.InteractionTypeText
+
+        ```
+
+        d) Run both tests in the ```RptContactTypes``` TestClass which now should both pass
+
+        ```TSQL
+        EXEC tSQLt.Run '[RptContactTypes]'
+        ```
+
+        e) If we were writing additional test within to check additional scenario such as no data in interaction table ib ```RptContactTypes``` TestClass the Assemble section will be very similar
+          - Create Fake InteractionType & Interaction Tables
+          - Create Expected data table to compare from actual RptContactTypes view
+
+        **tSQLt support setup that will be run before each test within the ```RptContactTypes``` Testclass**
+
+
+        the setup stored procedure encourages us to refactor our tests to increase readibility and allowing test to focus on relevant arrange.
+        
+        In our case the SetUp stored procedure will look as below:
+
+        ```TSQL
+        CREATE PROCEDURE RptContactTypes.SetUp AS
+
+        --Isolate from the Interaction and InteractionType tables:
+        EXEC tSQLt.FakeTable @TableName = N'dbo.InteractionType'
+        
+        EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
+            
+        INSERT dbo.InteractionType
+                ( InteractionTypeID, InteractionTypeText )
+        VALUES	 (1,'Introduction')
+                    ,(2,'Phone Call (Outbound)')
+                    ,(3,'Complaint')
+                    ,(4,'Sale')
+                    ,(5,'Meeting')
+
+        --Set Up Expected Data Table
+
+        IF object_id('RptContactTypes.Expected') IS NOT NULL
+        DROP TABLE RptContactTypes.Expected
+
+        CREATE TABLE RptContactTypes.Expected (
+            InteractionType varchar(100),
+            Occurrences INT,
+            TotalTimeInMinutes int
+            )
+        ```
 
 
 
 
+
+
+#### Exercise 3: Cross database testing
