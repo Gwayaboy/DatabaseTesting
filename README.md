@@ -13,8 +13,8 @@ Please [view and download ](https://github.com/Gwayaboy/Module2-UIAutomationTest
 
 ## Pre-requisites
     
-1. Local or Remote (on Azure or on-premises) SQL Server or  Instance or remote   
-2. SQL Server Management Studio    
+1. Local or remote (on Azure or on-premises) access to SQL Server instance   
+2. [SQL Server Management Studio](https://aka.ms/ssmsfullsetup)    
 3. [Git Bash](https://git-scm.com/download/win) and (optionally) [Redgate's sql test 28 day trial version](https://www.red-gate.com/products/sql-development/sql-test/trial/)
 
 ## Exercises
@@ -23,13 +23,14 @@ Please [view and download ](https://github.com/Gwayaboy/Module2-UIAutomationTest
 
   1. Open Gitbash Clone this repository 
   2. Set up customer management database
-        - Execute [Database Setup.sql]()
-        - Execute [Populate Data.sql]()
-
-
-
+        - Execute [Database Setup.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Database%20Setup.sql)
+        - Execute [Populate Data.sql](https://github.com/Gwayaboy/DatabaseTesting/blob/main/1%20-%20tSQlt_UnitTests/01%20-%20Setup%20DB/Populate%20Data.sql)
     
   2. Install tSQLt on customer management database
+        - Download and unzip [latest tSQLt release (tSQLt_V1.0.7597.5637)](http://tsqlt.org/download/tsqlt/)
+        - Open and run tSQLt.class against the CustomerManagement Database 
+        
+
 
 
 
