@@ -1,0 +1,39 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: runtsqltunittests@0
+  displayName: 'run tSQLt Example unit tests' 
+  inputs:
+    connectionString: 'Server=tcp:sqlserver2019demo.uksouth.cloudapp.azure.com,1433;Initial Catalog=tSQLt_Example;User ID=demoadmin;Password=SQLServerP@ssw0rd;'
+    queryTimeout: '60'
+    rootOutput: '$(System.DefaultWorkingDirectory)/tSQLt-out'
+    testResultsFileName: 'TEST-Results.xml'
+    enableCodeCoverage: false    
+    htmlReportsOutput: 'AzurePipelines'
+    runAllTests: false
+    testOrClassName: 'AcceleratorTests'
+  continueOnError: true
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/TEST-*.xml'
+    searchFolder: '$(Build.SourcesDirectory)/tSQLt-out'
+    
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/tSQLt-out/Cobertura.xml'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(Build.SourcesDirectory)/tSQLt-out/Cobertura.xml'
+    reportDirectory: '$(Build.SourcesDirectory)/tSQLt-out/AzurePipelines'
+  enabled: false
