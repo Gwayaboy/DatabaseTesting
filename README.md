@@ -90,7 +90,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
             ```
         b) Let's alter our test and add our assertion to check  RptContactTypes objects exists with
             
-        ```tsql
+        ```TSQL
             ALTER PROCEDURE  [RptContactTypes].[test to check RptContactTypes exists]     
             AS
             BEGIN                      
@@ -100,7 +100,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
             END;  
         ```
         c) submit procedure changes and execute the test with SQL Test or by executing in SSMS
-        ```tsql
+        ```TSQL
             EXEC [tSQLt].[Run] '[RptContactTypes].[test to check RptContactTypes exists]'
          ```
 
