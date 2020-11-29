@@ -1,6 +1,6 @@
 ﻿param(
     # Database info parameters    
-    [string]$connectionString
+    [string]$connectionString,
     [string]$queryTimeout = 60,
     [string]$databaseName, 
 
