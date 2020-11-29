@@ -1,15 +1,15 @@
 ﻿param(
     # Database info parameters    
-    [string]$connectionString = "Server=tcp:sqlserver2019demo.uksouth.cloudapp.azure.com,1433;Initial Catalog=tSQLt_Example;User ID=demoadmin;Password=SQLServerP@ssw0rd;" ,
+    [string]$connectionString
     [string]$queryTimeout = 60,
-    [string]$databaseName = "tSQLt_Example",
+    [string]$databaseName, 
 
     #tSQLt parameters
     $testNameOrClassName = "",
 
     # Code Coverage parameters
-    [string]$openCoverSourceFolder = "C:\dev\SQLCover\src\SQLCover\SQLCover\bin\Release\",
-    [string]$coberturaFileName = "C:\temp\coverage\Cobertura.xml"
+    [string]$openCoverSourceFolder 
+    [string]$coberturaFileName 
 )
 
 $executingScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
