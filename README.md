@@ -44,8 +44,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         - Open and run PrepareServer.sql and tSQLt.class to install tSQLt against your CustomerManagement Database 
 
   4. Our requirement is to Report contacts and avegare duration
-        ```Gherkin
-            
+        ```Gherkin            
             Feature: Prioritise customer engagements
                 As a Business Analyst 
                 I want to be able to report on number of contacts and duration 
@@ -61,11 +60,12 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
                 | Phone Call      | 200       | 20450              | 
         ```
 
-   5. The first and simplest test will be to check the RptContactTypes database object exists.
+        We will need to create a view that aggregates the data as above 
+
+  5. First let's write a failing testto check the RptContactTypes view exists.
         
         a) Let's create our ```RptContactTypes``` TestClass with our first ```[test to check RptContactTypes exists]```
-        
-        _Please note our test name includethe name of database object under test_
+                
     
         - With SQL Test
         
@@ -88,6 +88,12 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
                     EXEC tSQLt.Fail 'Not implemented yet'
                 END;    
             ```
+
+        - You will in  either case have procedure squeletton as above
+        - _Please note our test name include the name of database object under test._
+        
+        - _Each test name starts with test as a tSQLt naming convention for discovering new tests_
+
         b) Let's alter our test and add our assertion to check  RptContactTypes objects exists with
             
         ```TSQL
@@ -99,10 +105,71 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
                     @Message = N'The object dbo.RptContactTypes does not exist.' 
             END;  
         ```
-        c) submit procedure changes and execute the test with SQL Test or by executing in SSMS
+        c) submit procedure changes and execute the test with SQL Test or by typing and executingt in SSMS
+        
         ```TSQL
-            EXEC [tSQLt].[Run] '[RptContactTypes].[test to check RptContactTypes exists]'
-         ```
+        EXEC tSQLt.Run '[RptContactTypes].[test to check    RptContactTypes exists]'
+        ```
+
+        d) We have a failing specification which we are going to statisfy by creating the simplest View
+
+        ```TSQL
+        CREATE VIEW dbo.RptContactTypes AS
+        SELECT '' AS InteractionTypeText,
+            0 AS Occurrences,
+            0 AS TotalTimeMins
+
+        GO	 
+        ``` 
+        e) create the view and run the same test which should pass now.
+
+        ![](https://demosta.blob.core.windows.net/images/FirstPassingTest.PNG)           
+    
+  6. Let's build on a more useful test that will go through the followings steps
+
+        - Data table to be returned
+        - Expected set of data
+        - Capture output of object under test
+        - Assert they are the same
+        - Verify our assertion are met
+
+        a) following on steps 5. a) & b) create a new ```[test to check routine outputs correct data in table given normal input data]``` in the same ```RptContactTypes``` TestClass 
+
+        b) In the assemble or arrange section, Let's create a table to hold the expected data
+        
+        _PLease note that each test runs in own transaction so any object_
+
+        ```TSQL
+        --Assemble
+        IF object_id('RptContactTypes.Expected') IS NOT NULL
+        DROP TABLE RptContactTypes.Expected
+
+        CREATE TABLE RptContactTypes.Expected 
+        (
+          InteractionTypeText varchar(100),
+          Occurrences INT,
+          TotalTimeMins int
+        )
+
+        INSERT RptContactTypes.Expected VALUES 
+        ('Complaint',206,78411),
+        ('Introduction',214,77837),
+        ('Meeting',190,69050),
+        ('Sale',202,75175),
+        ('Phone Call (Outbound)',188,64839)
+        ```
+
+        c) Next we will specify in the Act section the data will be retrieving from our actual view
+
+        ```TSQL
+        --Act
+        SELECT * INTO RptContactTypes.Actual FROM dbo.RptContactTypes
+
+        ```
+
+        
+
+
 
 
 
