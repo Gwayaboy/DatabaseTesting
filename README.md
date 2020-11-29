@@ -372,13 +372,13 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
     ```
 
     
-**Please note that tSQLt needs to be installed on both database as it doesn't support natively cross database**
+    **Please note that tSQLt needs to be installed on both database as it doesn't support natively cross database**
 
 2. Open and run PrepareServer.sql and tSQLt.class to install tSQLt against both test_tsqlt_1 and test_tsqlt_2 Databases 
 
 3. In test_tsqlt_2, let's now create a ```crossDB``` TestClass and a ```test cross database view``` test
 
-```TSQL
+    ```TSQL
     USE test_tsqlt_2
     GO
     EXEC tSQLt.NewTestClass @ClassName = N'CrossDB' 
@@ -395,21 +395,31 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
     END;    
     ```
 
-4. let's go through our Assemble or Arrange
+4. let's go through our Assemble or Arrange section
 
-    - the view_src in test_tsqlt_2 is the database object under test
-    - view_src takes a dependency on test_tsqlt_1.dbo.phys_src which we want to isolate from
-    - create a fake table of test_tsqlt_1.dbo.phys_src which we then can populate with test data
-
+    - the ```test_tsqlt_2.dbo.view_src``` is our database object under test.
+    - that view takes a dependency on ```test_tsqlt_1.dbo.phys_src``` which we want to isolate from
+    - create a fake table of ```test_tsqlt_1.dbo.phys_src``` which we then can populate with test data
+    
     ```TSQL
     --Assemble
-	EXEC test_tsqlt_1.tSQLt.FakeTable @TableName = N'phys_src'; 
+    EXEC test_tsqlt_1.tSQLt.FakeTable @TableName = N'phys_src'; 
 
-	INSERT INTO test_tsqlt_1.dbo.phys_src (col1, col2)
-	VALUES	
-	(1,N'Some Value' ),
-	(2,N'Another Value' );
+    INSERT INTO test_tsqlt_1.dbo.phys_src (col1, col2)
+    VALUES	
+    (1,N'Some Value' ),
+    (2,N'Another Value' );
+
+    SELECT * INTO #Expected FROM test_tsqlt_1.dbo.phys_src;
     ``` 
+
+    - This is good start but we are carrying the **bad practice of hard-coding database names into the tests which can quickly become a maintenance nightmare**
+    - a better practice will be to create [synonyms](https://docs.microsoft.com/en-us/sql/relational-databases/synonyms/synonyms-database-engine?view=sql-server-ver15) to introdyce layer in between dependencies and only test against one database
+    
+    - Now synomyms are not fully supported in tSQLt but an intermediary solution would be generate views in the with stored procedure in the first database that takes a second database name
+    - The stored procedure can loops through all tables in that second database and creates corresponding views in the first database.
+
+
 
 ## Module 2: Running tSQLT within Azure Pipelines
 
