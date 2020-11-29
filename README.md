@@ -15,13 +15,13 @@ Please [view and download ](https://github.com/Gwayaboy/Module2-UIAutomationTest
     
 1. Local or Remote (on Azure or on-premises) SQL Server or  Instance or remote   
 2. SQL Server Management Studio    
-3. Git Bash and (optionally) [Redgate's sql test 28 day trial version](https://www.red-gate.com/products/sql-development/sql-test/trial/)
+3. [Git Bash](https://git-scm.com/download/win) and (optionally) [Redgate's sql test 28 day trial version](https://www.red-gate.com/products/sql-development/sql-test/trial/)
 
 ## Exercises
 
   #### Exercise 1: Implementing your first tSQLt unit test
 
-  1. Clone this repository 
+  1. Open Gitbash Clone this repository 
   2. Set up customer management database
         - Execute [Database Setup.sql]()
         - Execute [Populate Data.sql]()
