@@ -44,24 +44,60 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         - Open and run PrepareServer.sql and tSQLt.class to install tSQLt against your CustomerManagement Database 
 
   4. Our requirement is to Report contacts and avegare duration
-  ```Gherkin
+   ```Gherkin
       
-      Feature: Report contacts and avegare duration
+      Feature: Prioritise customer engagements
         As a Business Analyst 
         I want to be able to report on number of contacts and duration 
         So that I can generate average (mean) contact time and prioritise customer engagement appropriately
 
       Scenario: Report for each contact type how many contacts and duration 
 
-      Examples Output:
-        | InteractionType | Occurence | TotalTineinMinutes | 
-        ------------------|-----------|--------------------|
+      Example Output:
+        | InteractionType | Occurence | TotalTimeinMinutes | 
+        |-----------------|-----------|--------------------|
         | Meeting         | 150       | 500000             | 
         | Introduction    | 200       | 20450              | 
         | Phone Call      | 200       | 20450              | 
+   ```
+
+   5. The first and simplest test will be to check the RptContactTypes database object exists.
         
-      ```
+        a) Let's create our ```RptContactTypes``` TestClass with our first ```[test to check RptContactTypes exists]```
         
+        _Please note our test name includethe name of database object under test_
+    
+        - With SQL Test
+        
+            Select Customer management, right click and select new Test
+        ![](https://demosta.blob.core.windows.net/images/CreatetSQLtTestWithSQLTest.png)
+
+        Or
+        - directly type and execute the following statement:
+            ```TSQL
+                EXEC tSQLt.NewTestClass @ClassName = N'RptContactTypes' 
+                GO
+                CREATE PROCEDURE [RptContactTypes].[test to check RptContactTypes exists]
+                AS
+                BEGIN
+                --Assemble
+
+                --Act
+                
+                --Assert            
+                EXEC tSQLt.Fail 'Not implemented yet'
+                END;    
+            ```
+        b) Let's assert the RptContactTypes objects exists with
+            
+        ```tsql               
+            --Assert
+            EXEC tSQLt.AssertObjectExists @ObjectName = N'dbo.RptContactTypes', -- nvarchar(max)
+                @Message = N'The object dbo.RptContactTypes does not exist.' -- nvarchar(max)
+        ```
+
+
+            
 
 
 
