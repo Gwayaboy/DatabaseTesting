@@ -267,29 +267,79 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         ```TSQL
         CREATE PROCEDURE RptContactTypes.SetUp AS
 
-        --Isolate from the Interaction and InteractionType tables:
-        EXEC tSQLt.FakeTable @TableName = N'dbo.InteractionType'
-        
-        EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
+            --Isolate from the Interaction and InteractionType tables:
+            EXEC tSQLt.FakeTable @TableName = N'dbo.InteractionType'
             
-        INSERT dbo.InteractionType
-                ( InteractionTypeID, InteractionTypeText )
-        VALUES	 (1,'Introduction')
-                    ,(2,'Phone Call (Outbound)')
-                    ,(3,'Complaint')
-                    ,(4,'Sale')
-                    ,(5,'Meeting')
+            EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
+                
+            INSERT dbo.InteractionType
+                    ( InteractionTypeID, InteractionType )
+            VALUES	 (1,'Introduction')
+                        ,(2,'Phone Call (Outbound)')
+                        ,(3,'Complaint')
+                        ,(4,'Sale')
+                        ,(5,'Meeting')
 
-        --Set Up Expected Data Table
+            --Set Up Expected Data Table
 
-        IF object_id('RptContactTypes.Expected') IS NOT NULL
-        DROP TABLE RptContactTypes.Expected
+            IF object_id('RptContactTypes.Expected') IS NOT NULL
+            DROP TABLE RptContactTypes.Expected
 
-        CREATE TABLE RptContactTypes.Expected (
-            InteractionType varchar(100),
-            Occurrences INT,
-            TotalTimeInMinutes int
-            )
+            CREATE TABLE RptContactTypes.Expected (
+                InteractionType varchar(100),
+                Occurrences INT,
+                TotalTimeInMinutes int
+                )
+            ```
+
+            f) we can then refactor our second test to be me much more focused as follow
+
+            ```TSQL
+            ALTER PROCEDURE [RptContactTypes].[test to check routine outputs correct data in table given normal input data]
+            AS
+            BEGIN
+            --Assemble 
+            --Insert test data into Interaction table (Faked in Setup Routine)  
+
+            INSERT dbo.Interaction
+                    ( InteractionTypeID ,
+                    InteractionStartDT ,
+                    InteractionEndDT 
+                    )
+            VALUES  ( 
+                    5 , -- Meeting
+                    CONVERT(DATETIME,'2013-01-03 09:00:00',120),
+                    CONVERT(DATETIME,'2013-01-03 09:30:00',120) 
+                    )
+                    ,( 
+                    5 , -- Meeting
+                    CONVERT(DATETIME,'2013-01-02 09:00:00',120),
+                    CONVERT(DATETIME,'2013-01-02 10:30:00',120) 
+                    )
+                    ,( 
+                    2 , -- Phone Call (Outbound)
+                    CONVERT(DATETIME,'2013-01-03 09:01:00',120),
+                    CONVERT(DATETIME,'2013-01-03 09:13:00',120) 
+                    )
+
+            --Insert Expected Values
+
+            INSERT RptContactTypes.Expected VALUES 
+                ('Meeting',2,120), 
+                ('Phone Call (Outbound)',1,12)
+
+            --Act
+            SELECT * INTO RptContactTypes.Actual FROM dbo.RptContactTypes
+
+            
+            --Assert
+            EXEC tSQLt.AssertEqualsTable @Expected = N'RptContactTypes.Expected', -- nvarchar(max)
+                @Actual = N'RptContactTypes.Actual', -- nvarchar(max)
+                @FailMsg = N'The expected data was not returned.' -- nvarchar(max)
+            
+            
+            END;
+
         ```
 
 
@@ -298,3 +348,19 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
 
 #### Exercise 3: Cross database testing
+
+
+## Module 2: Running tSQLT within Azure Pipelines
+
+ #### Set up your Azure DevOps Organisation
+
+  1.	Use or [create](https://signup.live.com) your personal Microsoft Account (MSA)      
+  2.	[Create a free Azure DevOps organization](https://dev.azure.com/)  associated with your MSA
+
+  3. Create a New Project by clicking on the top right corning New Project button 
+
+      ![](https://demosta.blob.core.windows.net/images/NewDevOpsProject.PNG)
+
+  4. Set its visibility to public and name it DatabaseTesting 
+
+  5. optionally provide with a description such as _```"Run tSQlt tests within CI"`
