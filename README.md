@@ -62,7 +62,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
         We will need to create a view that aggregates the data as above 
 
-  5. First let's write a failing testto check the RptContactTypes view exists.
+  5. First let's write a failing test to check the RptContactTypes view exists.
         
         a) Let's create our ```RptContactTypes``` TestClass with our first ```[test to check RptContactTypes exists]```
                 
@@ -70,6 +70,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         - With SQL Test
         
             Select Customer management, right click and select new Test
+
         ![](https://demosta.blob.core.windows.net/images/CreatetSQLtTestWithSQLTest.png)
 
         Or
@@ -340,11 +341,75 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         
         
         END;
-
-    ```
+        ```
 
 #### Exercise 3: Cross database testing
 
+1. Let's create 2 databases with a view in the first database that depends on the a table on the second one.
+
+    ```TSQL
+    USE master
+    GO
+    CREATE DATABASE test_tsqlt_1
+    GO
+    USE test_tsqlt_1
+    GO
+    CREATE TABLE test_tsqlt_1.dbo.phys_src (
+        col1 int NOT NULL,
+        col2 nvarchar(MAX) NOT null)
+    
+    ```
+    Then in test_tsqlt_2 I created the following cross database view
+    ```TSQL
+    USE master
+    GO
+    CREATE DATABASE test_tsqlt_2
+    GO
+    USE test_tsqlt_2
+    GO
+    CREATE VIEW dbo.view_src AS
+    SELECT * FROM test_tsqlt_1.dbo.phys_src
+    ```
+
+    
+**Please note that tSQLt needs to be installed on both database as it doesn't support natively cross database**
+
+2. Open and run PrepareServer.sql and tSQLt.class to install tSQLt against both test_tsqlt_1 and test_tsqlt_2 Databases 
+
+3. In test_tsqlt_2, let's now create a ```crossDB``` TestClass and a ```test cross database view``` test
+
+```TSQL
+    USE test_tsqlt_2
+    GO
+    EXEC tSQLt.NewTestClass @ClassName = N'CrossDB' 
+    GO
+    CREATE PROCEDURE [CrossDB].[test cross database view]
+    AS
+    BEGIN
+        --Assemble
+
+        --Act
+        
+        --Assert            
+        EXEC tSQLt.Fail 'Not implemented yet'
+    END;    
+    ```
+
+4. let's go through our Assemble or Arrange
+
+    - the view_src in test_tsqlt_2 is the database object under test
+    - view_src takes a dependency on test_tsqlt_1.dbo.phys_src which we want to isolate from
+    - create a fake table of test_tsqlt_1.dbo.phys_src which we then can populate with test data
+
+    ```TSQL
+    --Assemble
+	EXEC test_tsqlt_1.tSQLt.FakeTable @TableName = N'phys_src'; 
+
+	INSERT INTO test_tsqlt_1.dbo.phys_src (col1, col2)
+	VALUES	
+	(1,N'Some Value' ),
+	(2,N'Another Value' );
+    ``` 
 
 ## Module 2: Running tSQLT within Azure Pipelines
 
