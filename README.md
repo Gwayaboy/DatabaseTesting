@@ -345,6 +345,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
 #### Exercise 3: Cross database testing
 
+
 ## Module 2: Running tSQLT within Azure Pipelines
 
  #### Set up your Azure DevOps Organisation

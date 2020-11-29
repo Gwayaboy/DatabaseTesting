@@ -8,7 +8,7 @@
     $testNameOrClassName = "",
 
     # Code Coverage parameters
-    [string]$openCoverSourceFolder 
+    [string]$openCoverSourceFolder,
     [string]$coberturaFileName 
 )
 
