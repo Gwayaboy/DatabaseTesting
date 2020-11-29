@@ -99,7 +99,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
                     @Message = N'The object dbo.RptContactTypes does not exist.' 
             END;  
         ```
-        c) submit procedure changes and execute the test with SQL Test or by running
+        c) submit procedure changes and execute the test with SQL Test or by executing in SSMS
         ```tsql
             EXEC [tSQLt].[Run] '[RptContactTypes].[test to check RptContactTypes exists]'
          ```
