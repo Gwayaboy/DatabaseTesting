@@ -12,7 +12,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
     - Azure Pipeline Demo
 
 
-## Module 1: SQL Server Testing with tSQLT
+## Module 1: SQL Server Testing with tSQLt
 
   ### Pre-requisites
     
