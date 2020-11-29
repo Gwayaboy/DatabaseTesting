@@ -44,22 +44,22 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         - Open and run PrepareServer.sql and tSQLt.class to install tSQLt against your CustomerManagement Database 
 
   4. Our requirement is to Report contacts and avegare duration
-   ```Gherkin
-      
-      Feature: Prioritise customer engagements
-        As a Business Analyst 
-        I want to be able to report on number of contacts and duration 
-        So that I can generate average (mean) contact time and prioritise customer engagement appropriately
+        ```Gherkin
+            
+            Feature: Prioritise customer engagements
+                As a Business Analyst 
+                I want to be able to report on number of contacts and duration 
+                So that I can generate average (mean) contact time and prioritise customer engagement appropriately
 
-      Scenario: Report for each contact type how many contacts and duration 
+            Scenario: Report for each contact type how many contacts and duration 
 
-      Example Output:
-        | InteractionType | Occurence | TotalTimeinMinutes | 
-        |-----------------|-----------|--------------------|
-        | Meeting         | 150       | 500000             | 
-        | Introduction    | 200       | 20450              | 
-        | Phone Call      | 200       | 20450              | 
-   ```
+            Example Output:
+                | InteractionType | Occurence | TotalTimeinMinutes | 
+                |-----------------|-----------|--------------------|
+                | Meeting         | 150       | 500000             | 
+                | Introduction    | 200       | 20450              | 
+                | Phone Call      | 200       | 20450              | 
+        ```
 
    5. The first and simplest test will be to check the RptContactTypes database object exists.
         
@@ -73,28 +73,37 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         ![](https://demosta.blob.core.windows.net/images/CreatetSQLtTestWithSQLTest.png)
 
         Or
-        - directly type and execute the following statement:
+        - in SSMS directly type and execute the following statement:
             ```TSQL
                 EXEC tSQLt.NewTestClass @ClassName = N'RptContactTypes' 
                 GO
                 CREATE PROCEDURE [RptContactTypes].[test to check RptContactTypes exists]
                 AS
                 BEGIN
-                --Assemble
+                    --Assemble
 
-                --Act
-                
-                --Assert            
-                EXEC tSQLt.Fail 'Not implemented yet'
+                    --Act
+                    
+                    --Assert            
+                    EXEC tSQLt.Fail 'Not implemented yet'
                 END;    
             ```
-        b) Let's assert the RptContactTypes objects exists with
+        b) Let's alter our test and add our assertion to check  RptContactTypes objects exists with
             
-        ```tsql               
-            --Assert
-            EXEC tSQLt.AssertObjectExists @ObjectName = N'dbo.RptContactTypes', -- nvarchar(max)
-                @Message = N'The object dbo.RptContactTypes does not exist.' -- nvarchar(max)
+        ```tsql
+            ALTER  PROCEDURE  [RptContactTypes].[test to check RptContactTypes exists]     
+            AS
+            BEGIN                      
+                --Assert
+                EXEC tSQLt.AssertObjectExists @ObjectName = N'dbo.RptContactTypes', 
+                    @Message = N'The object dbo.RptContactTypes does not exist.' 
+            END;  
         ```
+        c) submit procedure changes and execute the test with SQL Test or by running
+        ```tsql
+            EXEC [tSQLt].[Run] '[RptContactTypes].[test to check RptContactTypes exists]'
+         ```
+
 
 
             
