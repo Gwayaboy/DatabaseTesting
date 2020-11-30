@@ -153,7 +153,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
             
         INSERT dbo.InteractionType
-                ( InteractionTypeID, InteractionType )
+                ( InteractionTypeID, InteractionTypeText )
         VALUES	 (1,'Introduction'),
                 (2,'Phone Call (Outbound)'),
                 (3,'Complaint'),
