@@ -153,7 +153,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
             
         INSERT dbo.InteractionType
-                ( InteractionTypeID, InteractionTypeText )
+                ( InteractionTypeID, InteractionType )
         VALUES	 (1,'Introduction'),
                 (2,'Phone Call (Outbound)'),
                 (3,'Complaint'),
@@ -184,9 +184,9 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         DROP TABLE RptContactTypes.Expected
         
         CREATE TABLE RptContactTypes.Expected (
-        InteractionTypeText varchar(100),
+        InteractionType varchar(100),
         Occurrences INT,
-        TotalTimeMins int
+        TotalTimeInMinutes int
         )
 
         INSERT RptContactTypes.Expected VALUES 
