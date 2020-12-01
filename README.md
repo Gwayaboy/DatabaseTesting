@@ -43,7 +43,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         - Download and unzip [latest tSQLt release (tSQLt_V1.0.7597.5637)](http://tsqlt.org/download/tsqlt/)
         - Open and run PrepareServer.sql and tSQLt.class to install tSQLt against your CustomerManagement Database 
 
-  4. Our requirement is to Report contacts and avegare duration
+  4. Our requirement is to Report contacts frequenct and their average duration
         ```Gherkin            
             Feature: Prioritise customer engagements
                 As a Business Analyst 
