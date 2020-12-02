@@ -412,6 +412,27 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
     SELECT * INTO #Expected FROM test_tsqlt_1.dbo.phys_src;
     ``` 
+    
+  5. Our Act session will be simply retrieving the data from our view into a temporary ```#Actual``` table
+  
+   ```TSQL
+   SELECT * INTO #Actual FROM view_src
+    ``` 
+    
+  6. Let's assert that the actual data retrieved from view is the same as the expected test data we have prepared in our Assemble section
+  
+  ```TSQL
+  --Assert
+    EXEC tSQLt.AssertEqualsTable @Expected = N'#Expected', 
+        @Actual = N'RptContactTypes.Actual', -- nvarchar(max)
+        @FailMsg = N'The expected data was not returned.' -- nvarchar(max)
+  ```
+  
+  7. Finally, update the test SP and our test (we should then have a passing test)      
+
+    ```TSQL
+    EXEC tSQLt.Run '[CrossDB]'
+    ```
 
     - This is good start but we are carrying the **bad practice of hard-coding database names into the tests which can quickly become a maintenance nightmare**
     - a better practice will be to create [synonyms](https://docs.microsoft.com/en-us/sql/relational-databases/synonyms/synonyms-database-engine?view=sql-server-ver15) to introduce layer in between dependencies and only test against one database
