@@ -416,6 +416,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
   5. Our Act session will be simply retrieving the data from our view into a temporary ```#Actual``` table
   
        ```TSQL
+       -- Act
        SELECT * INTO #Actual FROM view_src
         ``` 
     
@@ -430,9 +431,9 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
   
   7. Finally, update the test SP and our test (we should then have a passing test)      
 
-    ```TSQL
-    EXEC tSQLt.Run '[CrossDB]'
-    ```
+        ```TSQL
+        EXEC tSQLt.Run '[CrossDB]'
+        ```
 
     - This is good start but we are carrying the **bad practice of hard-coding database names into the tests which can quickly become a maintenance nightmare**
     - a better practice will be to create [synonyms](https://docs.microsoft.com/en-us/sql/relational-databases/synonyms/synonyms-database-engine?view=sql-server-ver15) to introduce layer in between dependencies and only test against one database
