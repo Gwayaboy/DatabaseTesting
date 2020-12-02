@@ -1,6 +1,6 @@
 # Database Testing: tSQLt unit testing and Azure DevOps
 
-Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/main/0%20-%20Content/DatabateTestingWorkshop.pdf) Slide deck
+Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/main/0%20-%20Content/DatabateTestingWorkshop.pdf) the slide deck
 
 ## Agenda
 
