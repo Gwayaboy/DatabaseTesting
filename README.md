@@ -424,9 +424,9 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
   
       ```TSQL
       --Assert
-        EXEC tSQLt.AssertEqualsTable @Expected = N'#Expected', 
-            @Actual = N'RptContactTypes.Actual', -- nvarchar(max)
-            @FailMsg = N'The expected data was not returned.' -- nvarchar(max)
+      EXEC tSQLt.AssertEqualsTable @Expected = N'#Expected', 
+            @Actual = N'#Actual', 
+            @FailMsg = N'The expected data was not returned.' 
       ```
   
   7. Finally, update the test SP and our test (we should then have a passing test)      
