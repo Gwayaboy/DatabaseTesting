@@ -435,11 +435,11 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         EXEC tSQLt.Run '[CrossDB]'
         ```
 
-    - This is good start but we are carrying the **bad practice of hard-coding database names into the tests which can quickly become a maintenance nightmare**
-    - a better practice will be to create [synonyms](https://docs.microsoft.com/en-us/sql/relational-databases/synonyms/synonyms-database-engine?view=sql-server-ver15) to introduce layer in between dependencies and only test against one database
+        - This is good start but we are carrying the **bad practice of hard-coding database names into the tests which can quickly become a maintenance nightmare**
+        - a better practice will be to create [synonyms](https://docs.microsoft.com/en-us/sql/relational-databases/synonyms/synonyms-database-engine?view=sql-server-ver15) to introduce layer in between dependencies and only test against one database
     
-    - Now synomyms are not fully supported in tSQLt but an intermediary solution would be generate views from a custom stored procedure in the first database that takes a second database name, that way if any of the database objects changes in the second database, there's only one place to update.
-    - The stored procedure can loop through all tables in that second database and create corresponding views in the first database.
+        - Now synomyms are not fully supported in tSQLt but an intermediary solution would be generate views from a custom stored procedure in the first database that takes a second database name, that way if any of the database objects changes in the second database, there's only one place to update.
+        - The stored procedure can loop through all tables in that second database and create corresponding views in the first database.
 
 
 
