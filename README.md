@@ -43,7 +43,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         - Download and unzip [latest tSQLt release (tSQLt_V1.0.7597.5637)](http://tsqlt.org/download/tsqlt/)
         - Open and run PrepareServer.sql and tSQLt.class to install tSQLt against your CustomerManagement Database 
 
-  4. Our requirement is to Report contacts frequenct and their average duration
+  4. Our requirement is to Report contacts frequency and their average duration
         ```Gherkin            
             Feature: Prioritise customer engagements
                 As a Business Analyst 
@@ -90,12 +90,12 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
                 END;    
             ```
 
-        - You will in  either case have procedure squeletton as above
+        - You will in  either case have a procedure squeletton as above
         - _Please note our test name include the name of database object under test._
         
         - _Each test name starts with test as a tSQLt naming convention for discovering new tests_
 
-        b) Let's alter our test and add our assertion to check  RptContactTypes objects exists with
+        b) Let's alter our test and add our assertion to check the RptContactTypes view exists with
             
         ```TSQL
             ALTER PROCEDURE  [RptContactTypes].[test to check RptContactTypes exists]     
@@ -106,7 +106,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
                     @Message = N'The object dbo.RptContactTypes does not exist.' 
             END;  
         ```
-        c) submit procedure changes and execute the test with SQL Test or by typing and executingt in SSMS
+        c) submit procedure changes and execute the test with SQL Test or by typing and executing in SSMS
         
         ```TSQL
         EXEC tSQLt.Run '[RptContactTypes].[test to check    RptContactTypes exists]'
@@ -194,7 +194,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         ('Phone Call (Outbound)',1,12)
         ```
 
-        c) Next we will specify in the Act section the data will be retrieving from our actual view
+        c) Next we will retrieve in the Act section the data from our actual view
 
         ```TSQL
         --Act
@@ -254,15 +254,15 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         EXEC tSQLt.Run '[RptContactTypes]'
         ```
 
-        e) We should bewriting additional tests  to check additional all scenarios such as no data in interaction table.
-        For brievity we won't write these additional tests within  ```RptContactTypes``` TestClass, but we can expect the Assemble section of these tests to be following the same common steps:
+        e) We should be writing additional tests, within  ```RptContactTypes``` TestClass, to check all scenarios such as no data in the ```Interaction``` table
+        For brievity we won't write them, but we can expect the Assemble section of these tests to be following the same common steps:
           - Create Fake InteractionType & Interaction Tables
           - Create Expected data table structure
 
-        **Conveniently tSQLt supports a set up routine that will be run before each test within the a Testclass**
+        **Conveniently tSQLt supports a set up routine that will be run before each test within a Testclass**
 
 
-        the setup stored procedure encourages us to refactor our tests to increase readibility and allowing test to focus on relevant arrange.
+        the setup stored procedure encourages us to refactor our tests to increase readibility and allowing test to focus on relevant elements in the arrange section.
         
         In our case the SetUp stored procedure will look as below:
 
@@ -359,7 +359,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         col2 nvarchar(MAX) NOT null)
     
     ```
-    Then in test_tsqlt_2 I created the following cross database view
+    Then in test_tsqlt_2 create the following cross database view
     ```TSQL
     USE master
     GO
@@ -372,9 +372,9 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
     ```
 
     
-    **Please note that tSQLt needs to be installed on both database as it doesn't support natively cross database**
+    **Please note that tSQLt needs to be installed on both database as it doesn't support natively cross-database isolation (from just one)**
 
-2. Open and run PrepareServer.sql and tSQLt.class to install tSQLt against both test_tsqlt_1 and test_tsqlt_2 Databases 
+2. Open and run PrepareServer.sql and tSQLt.class.sql to install tSQLt against both test_tsqlt_1 and test_tsqlt_2 Databases 
 
 3. In test_tsqlt_2, let's now create a ```crossDB``` TestClass and a ```test cross database view``` test
 
@@ -399,7 +399,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 
     - the ```test_tsqlt_2.dbo.view_src``` is our database object under test.
     - that view takes a dependency on ```test_tsqlt_1.dbo.phys_src``` which we want to isolate from
-    - create a fake table of ```test_tsqlt_1.dbo.phys_src``` which we then can populate with test data
+    - we want to create a fake table of ```test_tsqlt_1.dbo.phys_src``` which we then can populate with test data 
     
     ```TSQL
     --Assemble
@@ -414,10 +414,10 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
     ``` 
 
     - This is good start but we are carrying the **bad practice of hard-coding database names into the tests which can quickly become a maintenance nightmare**
-    - a better practice will be to create [synonyms](https://docs.microsoft.com/en-us/sql/relational-databases/synonyms/synonyms-database-engine?view=sql-server-ver15) to introdyce layer in between dependencies and only test against one database
+    - a better practice will be to create [synonyms](https://docs.microsoft.com/en-us/sql/relational-databases/synonyms/synonyms-database-engine?view=sql-server-ver15) to introduce layer in between dependencies and only test against one database
     
-    - Now synomyms are not fully supported in tSQLt but an intermediary solution would be generate views in the with stored procedure in the first database that takes a second database name
-    - The stored procedure can loops through all tables in that second database and creates corresponding views in the first database.
+    - Now synomyms are not fully supported in tSQLt but an intermediary solution would be generate views from a custom stored procedure in the first database that takes a second database name, that way if any of the database objects changes in the second database, there's only one place to update.
+    - The stored procedure can loop through all tables in that second database and create corresponding views in the first database.
 
 
 
