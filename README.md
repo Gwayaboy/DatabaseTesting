@@ -415,18 +415,18 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
     
   5. Our Act session will be simply retrieving the data from our view into a temporary ```#Actual``` table
   
-   ```TSQL
-   SELECT * INTO #Actual FROM view_src
-    ``` 
+       ```TSQL
+       SELECT * INTO #Actual FROM view_src
+        ``` 
     
   6. Let's assert that the actual data retrieved from view is the same as the expected test data we have prepared in our Assemble section
   
-  ```TSQL
-  --Assert
-    EXEC tSQLt.AssertEqualsTable @Expected = N'#Expected', 
-        @Actual = N'RptContactTypes.Actual', -- nvarchar(max)
-        @FailMsg = N'The expected data was not returned.' -- nvarchar(max)
-  ```
+      ```TSQL
+      --Assert
+        EXEC tSQLt.AssertEqualsTable @Expected = N'#Expected', 
+            @Actual = N'RptContactTypes.Actual', -- nvarchar(max)
+            @FailMsg = N'The expected data was not returned.' -- nvarchar(max)
+      ```
   
   7. Finally, update the test SP and our test (we should then have a passing test)      
 
