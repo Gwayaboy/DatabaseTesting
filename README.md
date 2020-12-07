@@ -253,97 +253,101 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         ```TSQL
         EXEC tSQLt.Run '[RptContactTypes]'
         ```
+
 #### Exercise 2.a: Refactoring our tSQLt unit tests with Setup routine
 
-    a) We should be writing additional tests, within  ```RptContactTypes``` TestClass, to check all scenarios such as no data in the ```Interaction``` table
-        For brievity we won't write them, but we can expect the Assemble section of these tests to be following the same common steps:
-              
-        - Create Fake InteractionType & Interaction Tables
-        - Create Expected data table structure
 
-        **Conveniently tSQLt supports a set up routine that will be run before each test within a Testclass**
+We should be writing additional tests, within  ```RptContactTypes``` TestClass, to check all scenarios such as no data in the ``Interaction``` table. 
+For brievity we won't write them...
 
-
-        the setup stored procedure encourages us to refactor our tests to increase readibility and allowing test to focus on relevant elements in the arrange section.
+1. However, we can expect the Assemble section of these tests to be following the same common steps:
         
-        In our case the SetUp stored procedure will look as below:
+    - Create Fake InteractionType & Interaction Tables
+    - Create Expected data table structure
 
-        ```TSQL
-        CREATE PROCEDURE RptContactTypes.SetUp AS
+    **Conveniently tSQLt supports a set up routine that will be run before each test within a Testclass**
 
-        --Isolate from the Interaction and InteractionType tables:
-        EXEC tSQLt.FakeTable @TableName = N'dbo.InteractionType'
 
-        EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
+    the setup stored procedure encourages us to refactor our tests to increase readibility and allowing test to focus on relevant elements in the arrange section.
 
-        INSERT dbo.InteractionType
-                ( InteractionTypeID, InteractionType )
-        VALUES	 (1,'Introduction')
-                    ,(2,'Phone Call (Outbound)')
-                    ,(3,'Complaint')
-                    ,(4,'Sale')
-                    ,(5,'Meeting')
+    In our case the SetUp stored procedure will look as below:
 
-        --Set Up Expected Data Table
+    ```TSQL
+    CREATE PROCEDURE RptContactTypes.SetUp AS
 
-        IF object_id('RptContactTypes.Expected') IS NOT NULL
-        DROP TABLE RptContactTypes.Expected
+    --Isolate from the Interaction and InteractionType tables:
+    EXEC tSQLt.FakeTable @TableName = N'dbo.InteractionType'
 
-        CREATE TABLE RptContactTypes.Expected (
-            InteractionType varchar(100),
-            Occurrences INT,
-            TotalTimeInMinutes int
+    EXEC tSQLt.FakeTable @TableName = N'dbo.Interaction'
+
+    INSERT dbo.InteractionType
+            ( InteractionTypeID, InteractionType )
+    VALUES	 (1,'Introduction')
+                ,(2,'Phone Call (Outbound)')
+                ,(3,'Complaint')
+                ,(4,'Sale')
+                ,(5,'Meeting')
+
+    --Set Up Expected Data Table
+
+    IF object_id('RptContactTypes.Expected') IS NOT NULL
+    DROP TABLE RptContactTypes.Expected
+
+    CREATE TABLE RptContactTypes.Expected (
+        InteractionType varchar(100),
+        Occurrences INT,
+        TotalTimeInMinutes int
+        )
+    ```
+
+2. We can then refactor our second test to be be much more focused as follow:
+
+    ```TSQL
+    ALTER PROCEDURE [RptContactTypes].[test to check routine outputs correct data in table given normal input data]
+    AS
+    BEGIN
+    --Assemble 
+    --Insert test data into Interaction table (Faked in Setup Routine)  
+
+    INSERT dbo.Interaction
+            ( InteractionTypeID ,
+            InteractionStartDT ,
+            InteractionEndDT 
             )
-        ```
+    VALUES  ( 
+            5 , -- Meeting
+            CONVERT(DATETIME,'2013-01-03 09:00:00',120),
+            CONVERT(DATETIME,'2013-01-03 09:30:00',120) 
+            )
+            ,( 
+            5 , -- Meeting
+            CONVERT(DATETIME,'2013-01-02 09:00:00',120),
+            CONVERT(DATETIME,'2013-01-02 10:30:00',120) 
+            )
+            ,( 
+            2 , -- Phone Call (Outbound)
+            CONVERT(DATETIME,'2013-01-03 09:01:00',120),
+            CONVERT(DATETIME,'2013-01-03 09:13:00',120) 
+            )
 
-        b) we can then refactor our second test to be be much more focused as follow:
+    --Insert Expected Values
 
-        ```TSQL
-        ALTER PROCEDURE [RptContactTypes].[test to check routine outputs correct data in table given normal input data]
-        AS
-        BEGIN
-        --Assemble 
-        --Insert test data into Interaction table (Faked in Setup Routine)  
+    INSERT RptContactTypes.Expected VALUES 
+        ('Meeting',2,120), 
+        ('Phone Call (Outbound)',1,12)
 
-        INSERT dbo.Interaction
-                ( InteractionTypeID ,
-                InteractionStartDT ,
-                InteractionEndDT 
-                )
-        VALUES  ( 
-                5 , -- Meeting
-                CONVERT(DATETIME,'2013-01-03 09:00:00',120),
-                CONVERT(DATETIME,'2013-01-03 09:30:00',120) 
-                )
-                ,( 
-                5 , -- Meeting
-                CONVERT(DATETIME,'2013-01-02 09:00:00',120),
-                CONVERT(DATETIME,'2013-01-02 10:30:00',120) 
-                )
-                ,( 
-                2 , -- Phone Call (Outbound)
-                CONVERT(DATETIME,'2013-01-03 09:01:00',120),
-                CONVERT(DATETIME,'2013-01-03 09:13:00',120) 
-                )
+    --Act
+    SELECT * INTO RptContactTypes.Actual FROM dbo.RptContactTypes
 
-        --Insert Expected Values
 
-        INSERT RptContactTypes.Expected VALUES 
-            ('Meeting',2,120), 
-            ('Phone Call (Outbound)',1,12)
+    --Assert
+    EXEC tSQLt.AssertEqualsTable @Expected = N'RptContactTypes.Expected', -- nvarchar(max)
+        @Actual = N'RptContactTypes.Actual', -- nvarchar(max)
+        @FailMsg = N'The expected data was not returned.' -- nvarchar(max)
 
-        --Act
-        SELECT * INTO RptContactTypes.Actual FROM dbo.RptContactTypes
 
-        
-        --Assert
-        EXEC tSQLt.AssertEqualsTable @Expected = N'RptContactTypes.Expected', -- nvarchar(max)
-            @Actual = N'RptContactTypes.Actual', -- nvarchar(max)
-            @FailMsg = N'The expected data was not returned.' -- nvarchar(max)
-        
-        
-        END;
-        ```
+    END;
+    ```
 
 #### Exercise 3: Cross database testing
 
