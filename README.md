@@ -253,11 +253,12 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
         ```TSQL
         EXEC tSQLt.Run '[RptContactTypes]'
         ```
+#### Exercise 2.a: Refactoring our tSQLt unit tests with Setup routine
 
-        e) We should be writing additional tests, within  ```RptContactTypes``` TestClass, to check all scenarios such as no data in the ```Interaction``` table
+        a) We should be writing additional tests, within  ```RptContactTypes``` TestClass, to check all scenarios such as no data in the ```Interaction``` table
         For brievity we won't write them, but we can expect the Assemble section of these tests to be following the same common steps:
-          - Create Fake InteractionType & Interaction Tables
-          - Create Expected data table structure
+              - Create Fake InteractionType & Interaction Tables
+              - Create Expected data table structure
 
         **Conveniently tSQLt supports a set up routine that will be run before each test within a Testclass**
 
@@ -294,7 +295,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
             )
         ```
 
-        f) we can then refactor our second test to be be much more focused as follow:
+        b) we can then refactor our second test to be be much more focused as follow:
 
         ```TSQL
         ALTER PROCEDURE [RptContactTypes].[test to check routine outputs correct data in table given normal input data]
