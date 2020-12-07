@@ -257,7 +257,7 @@ Please [view and download ](https://github.com/Gwayaboy/DatabaseTesting/blob/mai
 #### Exercise 2.a: Refactoring our tSQLt unit tests with Setup routine
 
 
-We should be writing additional tests, within  ```RptContactTypes``` TestClass, to check all scenarios such as no data in the ``Interaction``` table. 
+We should be writing additional tests, within  ```RptContactTypes``` TestClass, to check all scenarios such as no data in the ```Interaction``` table. 
 For brievity we won't write them...
 
 1. However, we can expect the Assemble section of these tests to be following the same common steps:
